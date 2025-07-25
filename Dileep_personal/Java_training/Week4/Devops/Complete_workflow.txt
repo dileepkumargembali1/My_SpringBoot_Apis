@@ -1,0 +1,115 @@
+
+1. Comprehensive Deployment Strategy Document
+
+Components Covered:
+
+- Spring Boot Application (Containerized)
+- MySQL Database with Persistent Storage
+- Kubernetes for Orchestration
+- Docker Hub for Image Repository
+- Jenkins for CI/CD Pipeline
+- Ingress for External Access
+- Autoscaling and Resource Management
+
+Deployment Steps:
+
+- Source Code Management:
+  - Host application code on GitHub
+  - Dockerfile, Kubernetes YAMLs, and Helm charts included in the repository
+
+- CI/CD Pipeline (Jenkins Example):
+  - Build Stage: Compile Spring Boot application and run tests
+  - Docker Stage: Build image, tag with version, push to Docker Hub
+  - Deploy Stage: Use kubectl to apply Kubernetes manifests
+  - Post-Deploy: Trigger tests or smoke checks
+
+- Kubernetes Deployment:
+  - Deploy MySQL with Persistent Volume
+  - Deploy Spring Boot application with resource limits, autoscaling, and probes
+  - Expose Spring Boot via LoadBalancer or Ingress
+  - Autoscaler adjusts pod count based on CPU usage
+
+- Versioning:
+  - Images tagged as v1.0, v1.1, etc.
+  - Latest stable image tagged as latest
+
+2. Monitoring and Logging Setup
+
+Monitoring Tools:
+
+- Prometheus for collecting metrics (CPU, Memory, Pod Health)
+- Grafana for real-time visual dashboards
+- Kubernetes Metrics Server required for autoscaling
+
+Logging Setup:
+
+- Application logs streamed to stdout and stderr
+- ELK Stack (Elasticsearch, Logstash, Kibana) for centralized log aggregation
+- Kubernetes cluster logs managed using Fluentd or Fluent Bit
+
+Health Checks:
+
+- livenessProbe and readinessProbe in Kubernetes ensure pod health
+
+3. Backup and Disaster Recovery Procedures
+
+Database Backup:
+
+- Schedule automated backups using mysqldump to Persistent Volume or external storage
+- Store backups securely in cloud storage such as AWS S3 or Google Cloud Storage
+
+Application Recovery:
+
+- Docker images stored on Docker Hub for fast redeployment
+- Kubernetes manifests stored in Git for version-controlled redeployment
+
+Cluster Recovery:
+
+- Backup etcd for Kubernetes cluster state
+- Use managed Kubernetes services like EKS, AKS, or GKE for built-in resilience
+
+4. Security Best Practices for the Entire Pipeline
+
+- Use Kubernetes Secrets for sensitive data such as database passwords
+- No hardcoded credentials in code or images
+- Run containers as non-root users
+- Apply Network Policies to restrict pod-to-pod communication
+- Perform regular image vulnerability scans using tools like Trivy or Docker Hub scanning
+- Enable Role-Based Access Control (RBAC) in Kubernetes
+- Secure Jenkins with credentials vaults such as HashiCorp Vault
+- Use HTTPS for all external communication with Ingress and TLS
+- Keep dependencies and base images updated
+
+5. Troubleshooting Procedures for Common Issues
+
+Common Issues and Fixes:
+
+- Pod CrashLoopBackOff  
+  Check logs using kubectl logs and validate environment variables  
+
+- Container will not start  
+  Review livenessProbe and readinessProbe configurations  
+
+- Database Connection Errors  
+  Validate Secret values and service names inside the cluster  
+
+- Image Pull Errors  
+  Ensure image exists in Docker Hub and verify authentication  
+
+- High Resource Usage  
+  Adjust resource limits or autoscaling thresholds  
+
+- Ingress Not Accessible  
+  Verify Ingress Controller setup and DNS configuration  
+
+- Jenkins Build Failures  
+  Review Jenkins console output and check Docker daemon status  
+
+Common Debugging Commands:
+
+kubectl get pods  
+kubectl describe pod <pod-name>  
+kubectl logs <pod-name>  
+kubectl get events  
+kubectl exec -it <pod-name> -- /bin/sh  
+

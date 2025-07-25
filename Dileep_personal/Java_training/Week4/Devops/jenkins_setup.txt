@@ -1,0 +1,107 @@
+Step 1: Install Java
+
+Jenkins requires Java to run. Download and install Java 11 or newer.
+
+Set JAVA_HOME environment variable:
+
+Go to: This PC → Properties → Advanced System Settings → Environment Variables
+
+Add:
+JAVA_HOME = C:\Program Files\Java\jdk-21
+
+Update PATH variable:
+
+%JAVA_HOME%\bin
+
+Confirm installation:
+
+Open Command Prompt
+
+Run: java -version
+
+Java version should display
+
+Step 2: Install Jenkins
+
+Go to: https://www.jenkins.io/download/
+
+Download the Windows MSI Installer
+
+Run the installer
+
+Jenkins installs as a Windows Service, runs on port 8080
+
+Step 3: First Time Setup
+
+Open browser: http://localhost:8080
+
+Get the admin password from:
+
+C:\Program Files (x86)\Jenkins\secrets\initialAdminPassword
+
+
+Install suggested plugins
+
+Create admin username and password
+
+Jenkins is now ready to use.
+
+List and configure essential Jenkins plugins required for the pipeline
+
+Essential Plugins for Spring Boot with MySQL CI/CD:
+
+Git Plugin → To fetch code from GitHub
+
+Maven Integration Plugin → For building Maven projects
+
+Docker Pipeline Plugin → For building and pushing Docker images
+
+Kubernetes CLI Plugin → To deploy to Kubernetes
+
+Pipeline Plugin → To write Jenkins pipelines
+
+Credentials Plugin → For securely storing passwords and secrets
+
+Blue Ocean Plugin (Optional) → For modern UI and visual pipeline view
+
+How to Install Plugins:
+
+Go to: Manage Jenkins → Manage Plugins → Available tab
+
+Search for required plugins
+
+Select and click "Install without Restart"
+
+Wait for installation to complete
+
+Set up Jenkins credentials for Docker Hub and Kubernetes
+
+Why use credentials?
+
+To avoid hardcoding sensitive data like DockerHub password or Kubernetes config file in pipelines
+
+Setting up DockerHub Credentials:
+
+Go to: Manage Jenkins → Credentials → (Global)
+
+Click "Add Credentials"
+
+Kind: Secret Text
+
+ID: dockerhub-pwd
+
+Secret: Enter your DockerHub password
+
+Setting up Kubernetes Credentials:
+
+In Jenkins:
+
+Go to: Manage Jenkins → Credentials → (Global)
+
+Add Credentials
+
+Kind: Secret File
+
+ID: k8sconfigpwd
+
+Upload the kubeconfig file

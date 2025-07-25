@@ -1,0 +1,94 @@
+process to Create and Configure a Docker Hub Repository
+Steps:
+Create Docker Hub Account
+Visit https://hub.docker.com/ → Sign Up (free account available)
+
+Create Repository
+
+After login, click Repositories → Create Repository
+
+Enter:
+
+Repository Name (e.g., springboot-onetoone)
+
+Visibility: Public (free) or Private
+
+Click Create
+
+Repository URL
+
+After creation, your repository will look like:
+
+php-template
+Copy
+Edit
+docker.io/<your-username>/<repo-name>
+Example:
+
+docker.io/dileepkumar/springboot-onetoone
+ 2. Commands to Tag and Push Images to Docker Hub
+Pre-requisite: Login to Docker
+bash
+Copy
+Edit
+docker login
+Enter Docker Hub username and password.
+
+Build Image Locally
+
+docker build -t springbootonetoone:latest .
+Tag Image for Docker Hub
+
+docker tag springbootonetoone:latest <username>/<repo-name>:<version>
+Example:
+
+docker tag springbootonetoone:latest dileepkumar/springboot-onetoone:v1.0
+Push Image to Docker Hub
+
+docker push dileepkumar/springboot-onetoone:v1.0
+ 3. Set Up Automated Builds from GitHub Repository
+Steps:
+Connect GitHub to Docker Hub:
+
+Go to Docker Hub > Account Settings > Linked Accounts
+
+Link your GitHub account
+
+Configure Automated Build:
+
+Inside your Docker Hub repository, click Builds
+
+Click Configure Automated Builds
+
+Select your GitHub repository
+
+Set up build rules:
+
+Example:
+
+Build from main branch
+
+Tag as latest or v1.0
+
+Click Save and Enable
+
+Every GitHub Push triggers:
+
+Automatic image build
+
+Image push to Docker Hub under defined tags
+
+ 4. Implement Image Versioning Strategy
+Recommended Strategy:
+Tag Format	Description
+latest	Latest stable image (default use)
+v1.0, v1.1, v2.0	Semantic versioning for releases
+commit-hash	Optional unique tag per commit for traceability
+
+Examples:
+docker tag springbootonetoone:latest dileepkumar/springboot-onetoone:v1.0
+docker tag springbootonetoone:latest dileepkumar/springboot-onetoone:latest
+Push both:
+
+docker push dileepkumar/springboot-onetoone:v1.0
+docker push dileepkumar/springboot-onetoone:latest

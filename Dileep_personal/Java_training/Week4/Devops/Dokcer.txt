@@ -1,0 +1,36 @@
+Stage 1: Build the Application
+
+FROM eclipse-temurin:17-jdk-alpine AS build
+WORKDIR /app
+COPY . .
+RUN ./mvnw clean package -DskipTests
+FROM eclipse-temurin:17-jre-alpine AS runtime
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 9095
+ENV DB_URL=jdbc:mysql://localhost:3306/mydb \
+    DB_USERNAME=root \
+    DB_PASSWORD=Dileep@2610
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
+Explanation of Each Instruction
+
+FROM eclipse-temurin:17-jdk-alpine AS build: Uses small JDK Alpine image for building the project.
+
+WORKDIR /app: Sets the working directory inside the container.
+
+COPY . .: Copies your entire project into the container.
+
+RUN ./mvnw clean package -DskipTests: Builds the Spring Boot .jar file, skipping tests.
+
+FROM eclipse-temurin:17-jre-alpine AS runtime: Uses minimal JRE Alpine image for a smaller runtime container.
+
+WORKDIR /app: Working directory for running the app.
+
+COPY --from=build /app/target/*.jar app.jar: Copies the built .jar from the build stage.
+
+EXPOSE 9095: Exposes port 9095 inside the container.
+
+ENV DB_URL=...: Sets environment variables for database configuration.
+
+ENTRYPOINT ["java", "-jar", "app.jar"]: Starts the Spring Boot application

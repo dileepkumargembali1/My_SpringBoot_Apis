@@ -1,0 +1,84 @@
+Assessment: Car Parking Application Using Spring Boot
+Microservices
+Objective
+Develop a Car Parking Booking system using Microservices Architecture with the following
+components:
+• Eureka Server
+• API Gateway
+• Config Server
+• Two Microservices:
+o User Management Service
+o Parking Management Service
+• Optionally use either Feign Client or WebClient for inter-service communication
+(choose one).
+
+Microservices Overview
+1. Eureka Server
+• Service Registry to register all microservices.
+2. API Gateway
+• Central entry point for all client requests.
+• Handles routing, filtering, and load balancing.
+3. Config Server
+• Externalized configuration for all microservices.
+4. User Management Service
+• Handles user registration and login.
+• Users can view parking history.
+5. Parking Management Service
+• Handles slot availability, parking booking, and slot release.
+• Ensures no double booking (concurrency handled).
+
+
+User Table (User Management Service)
+Field Type Description
+userId Long Primary Key
+name String Full name
+email String Unique email ID
+mobileNumber String Contact number
+vehicleNumber String Car/bike registration number
+
+
+User Table (User Management Service)
+Field Type Description
+userId Long Primary Key
+name String Full name
+email String Unique email ID
+mobileNumber String Contact number
+vehicleNumber String Car/bike registration number
+
+API Endpoints
+User Management Service (/api/users)
+Method Endpoint Description
+POST /register Register a new user
+GET /{userId} Get user details by ID
+GET / Get all users
+
+Parking Management Service (/api/parking)
+Method Endpoint Description
+GET /available List all available parking slots
+POST /book/{slotId}/{userId} Book a parking slot
+POST /release/{slotId} Release a booked parking slot
+GET /history/{userId} Get parking history for a user
+Inter-service communication: When booking a slot, Parking Management
+Service must call the User Management Service to verify the user
+
+Project Constraints
+• Use Spring Boot 3, Spring Cloud Netflix Eureka, Spring Cloud Config, and Spring
+Gateway.
+• Store data using H2 Database or MySQL.
+• Use either Feign Client or WebClient (Student's choice).
+• RESTful architecture & best practices.
+
+
+Folder Structure Suggestion
+car-parking-system/
+├── eureka-server/
+├── config-server/
+├── api-gateway/
+├── user-management-service/
+├── parking-management-service/
+└── config-repo/ (Git-based or local config folder)
+
+
+Bonus (Concurrency Handling Challenge)
+• Ensure two users cannot book the same slot at the same time.
+• Handle concurrency with locking (Optimistic or Pessimistic Locking).

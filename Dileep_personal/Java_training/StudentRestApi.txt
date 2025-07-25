@@ -1,0 +1,174 @@
+StudentRestApi
+
+#Entity Class
+
+package com.tcs.student.entity;
+
+import java.util.List;
+
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name="student")
+public class Student {
+
+	    @Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	    private int id;
+	    private String name;
+	    private String email;
+	    private String courses;
+		
+		
+		public int getId() {
+			return id;
+		}
+
+
+		public void setId(int id) {
+			this.id = id;
+		}
+
+
+		public String getName() {
+			return name;
+		}
+
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+
+		public String getEmail() {
+			return email;
+		}
+
+
+		public void setEmail(String email) {
+			this.email = email;
+		}
+
+
+		public String getCourses() {
+			return courses;
+		}
+
+
+		public void setCourses(String courses) {
+			this.courses = courses;
+		}
+
+
+		public Student(int id, String name, String email, String courses) {
+			super();
+			this.id = id;
+			this.name = name;
+			this.email = email;
+			this.courses = courses;
+		}
+
+
+		public Student() {
+			
+		}
+}
+
+
+#Controller class
+
+package com.tcs.student.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.tcs.student.entity.Student;
+import com.tcs.student.service.StudentService;
+
+
+
+@RestController
+public class StudentController {
+
+    @Autowired
+    private StudentService studentService;
+
+    @PostMapping("/createstudent")
+    public Student createStudent(@RequestBody Student student) {
+        return studentService.createStudent(student);
+    }
+
+    @GetMapping("/showallstudents")
+    public List<Student> getAllStudents() {
+        return studentService.getAllStudents();
+    }
+
+    @GetMapping("/getbyid/{id}")
+    public Student getStudentById(@PathVariable int id) {
+        return studentService.getStudentById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
+    }
+}
+
+
+#Service class
+
+package com.tcs.student.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.tcs.student.entity.Student;
+import com.tcs.student.repository.StudentRepository;
+
+@Service
+public class StudentService {
+
+	
+	@Autowired
+    private StudentRepository repository;
+
+    public Student createStudent(Student student) {
+        return repository.save(student);
+    }
+
+    public List<Student> getAllStudents() {
+        return repository.findAll();
+    }
+
+    public Optional<Student> getStudentById(int id) {
+        return repository.findById(id);
+    }
+}
+
+
+#Repository Interface
+
+package com.tcs.student.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.tcs.student.entity.Student;
+
+public interface StudentRepository extends JpaRepository<Student, Integer>{
+
+}
+
+

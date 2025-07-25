@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+    tools {
+        maven 'maven3'
+    }
+    stages {
+        stage('Build Maven') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/dileepkumargembali1/devops-integration']]])
+                bat 'mvn clean install'
+            }
+        }
+        stage('Build docker image') {
+            steps {
+                script {
+                    bat 'docker build -t dileep2610/devops-integration .'
+                }
+            }
+        }
+        stage('Push image to Hub') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
+                        bat 'docker login -u dileep2610 -p %dockerhubpwd%'
+                    }
+                    bat 'docker push dileep2610/devops-integration'
+                }
+            }
+        }
+        stage('Deploy to k8s') {
+            steps {
+                script {
+                    kubernetesDeploy(configs: 'deploymentservice.yaml', kubeconfigId: 'k8sconfigpwd')
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully. Application deployed to Kubernetes.'
+            
+        }
+        failure {
+            echo 'Pipeline failed. Please check the Jenkins console output for errors.'
+            
+        }
+        always {
+            echo 'ℹPipeline execution finished.'
+        }
+    }
+}

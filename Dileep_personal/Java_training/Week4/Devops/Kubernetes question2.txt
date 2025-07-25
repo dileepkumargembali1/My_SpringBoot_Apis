@@ -1,0 +1,89 @@
+1. Horizontal Pod Autoscaling for Spring Boot
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: springboot-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: springboot-app
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
+ Note: Requires metrics-server installed in the cluster.
+
+ 2. Ingress Controller Setup for External Access
+Ingress Resource Example:
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: springboot-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: springboot.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: springboot-service
+                port:
+                  number: 9095
+ Requires NGINX Ingress Controller installed in the cluster.
+ Update your DNS or /etc/hosts to map springboot.example.com to your cluster IP.
+
+ 3. Rolling Update Strategy for Spring Boot Deployment
+
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+Add this to your Spring Boot Deployment under spec.
+Ensures:
+✔ No downtime during updates
+✔ Only 1 pod unavailable at a time
+✔ Gradual rollout of new version
+
+ 4. Resource Limits and Requests
+Add inside Spring Boot container spec:
+resources:
+  requests:
+    cpu: "250m"
+    memory: "512Mi"
+  limits:
+    cpu: "500m"
+    memory: "1Gi"
+✔ Ensures fair resource allocation
+✔ Prevents a single container from over-consuming cluster resources
+
+ 5. Health Checks: Liveness & Readiness Probes
+Add inside Spring Boot container spec:
+livenessProbe:
+  httpGet:
+    path: /project/welocme
+    port: 9095
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /project/welocme
+    port: 9095
+  initialDelaySeconds: 15
+  periodSeconds: 5
+✔ livenessProbe restarts stuck containers
+✔ readinessProbe ensures traffic only sent to healthy pods
