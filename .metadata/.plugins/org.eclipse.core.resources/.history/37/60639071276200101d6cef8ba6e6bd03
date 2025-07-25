@@ -1,0 +1,12 @@
+package ComA;
+
+import java.util.Scanner;
+
+
+public class Finally_ex {
+	
+	Scanner sc =new Scanner(System.in);
+    System.out.println("Enter name");
+    
+
+}
